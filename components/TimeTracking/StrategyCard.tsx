@@ -1,33 +1,30 @@
-const StrategyCard = () => {
+import StrategyStatus from "./StrategyStatus";
+
+const StrategyCard = ({ strategy }: any) => {
   return (
     <div className="rounded-sm border border-stroke bg-white py-6 px-7.5 shadow-default dark:border-strokedark dark:bg-boxdark divide-y divide-blue-200">
       <div className="flex items-start justify-between">
         <div className="w-full">
-          <p className="font-semibold text-primary">Strategy name - 110h30m</p>
-          <p className="text-sm font-medium">12.04.2022 - 12.05.2022</p>
-          <p className="text-sm font-medium">I want to learn English, lol</p>
+          <p className="font-semibold text-primary">
+            {strategy.Name} -{" "}
+            {strategy.Process.Int64 || 0 + "h/" + strategy.TimeEstimate + "h"}
+          </p>
+          <p className="text-sm font-medium">{strategy.StartedAt} - {strategy.EndedAt}</p>
+          <p className="text-sm font-medium">{strategy.Goal}</p>
         </div>
-        <span className="mt-1 mr-2 flex h-4 w-full max-w-4 items-center justify-center rounded-full border border-[#ffcc00]">
-          <span className="block h-2.5 w-full max-w-2.5 rounded-full bg-[#ffcc00]"></span>
-        </span>
+        <StrategyStatus status={strategy.Status}/>
       </div>
       <div className="mt-4 pt-4">
         <div className="pb-4">
-          <p className="text-sm font-medium">
-            First, learn listening from film or music
-          </p>
-          <p className="text-sm font-medium">
-            First, learn listening from film or music
-          </p>
-          <p className="text-sm font-medium">
-            First, learn listening from film or music
+          <p className="whitespace-pre-line	 text-sm font-medium">
+            {strategy.Details}
           </p>
         </div>
         <div className="flex justify-between">
-          <span className={`text-sm font-medium text-[#009999]`}>13.31</span>
-          <span className={`text-sm font-medium text-[#ff9900]`}>13.32</span>
-          <span className={`text-sm font-medium text-[#ff00ff]`}>13.33</span>
-          <span className={`text-sm font-medium text-[#cc0000]`}>13.34</span>
+          <span className={`text-sm font-medium text-[#009999]`}>{strategy.Satisfaction}</span>
+          <span className={`text-sm font-medium text-[#ff9900]`}>{strategy.Productivity}</span>
+          <span className={`text-sm font-medium text-[#ff00ff]`}>{strategy.Interested}</span>
+          <span className={`text-sm font-medium text-[#cc0000]`}>{strategy.Insight}</span>
         </div>
       </div>
     </div>

@@ -4,6 +4,7 @@ import { Fragment } from "react";
 import Datepicker from "react-tailwindcss-datepicker";
 import { useForm, SubmitHandler } from "react-hook-form";
 import dayjs from "dayjs";
+import useInsertStrategy from "@/hooks/useInsertStrategy";
 
 interface Inputs {
   name: string;
@@ -16,6 +17,17 @@ interface Inputs {
 }
 
 const StrategyDialog = ({ open, onClose }: any) => {
+  const { isLoading, fetch: insertStrategy } = useInsertStrategy({
+    onSuccess: (result: any) => {
+      console.log(result);
+      onCloseAndReset();
+    },
+    onError: (error: any) => {
+      console.log(error);
+      onCloseAndReset();
+    },
+  });
+
   const handleValueChange = (newValue: any) => {
     setValue("start", dayjs(newValue.startDate).toDate());
     setValue("end", dayjs(newValue.endDate).endOf("day").toDate());
@@ -39,7 +51,23 @@ const StrategyDialog = ({ open, onClose }: any) => {
       details: "",
     },
   });
-  const onSubmit: SubmitHandler<Inputs> = (data) => console.log(data);
+  const onSubmit: SubmitHandler<Inputs> = async (data) => {
+    console.log({
+      ...data,
+      unitTime: "hour",
+      timeEstimate: Number(data.timeEstimate),
+      createdAt: new Date(),
+      status: "NOT_STARTED",
+    });
+
+    await insertStrategy({
+      ...data,
+      unitTime: "hour",
+      timeEstimate: Number(data.timeEstimate),
+      createdAt: new Date(),
+      status: "NOT_STARTED",
+    });
+  };
   const watchStart = watch("start");
   const watchEnd = watch("end");
 
@@ -79,7 +107,7 @@ const StrategyDialog = ({ open, onClose }: any) => {
                   as="h3"
                   className="text-lg font-medium leading-6 text-gray-900"
                 >
-                  Strategy information
+                  Strategy information {isLoading.toString()}
                 </Dialog.Title>
 
                 <form onSubmit={handleSubmit(onSubmit)}>

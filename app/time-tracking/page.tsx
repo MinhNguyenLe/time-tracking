@@ -7,6 +7,8 @@ import PoromodoTable from "@/components/TimeTracking/PoromodoTable";
 import StrategyCard from "@/components/TimeTracking/StrategyCard";
 import StrategyDialog from "@/components/TimeTracking/StrategyDialog";
 import useDialog from "@/hooks/useDialog";
+import useGetListStrategies from "@/hooks/useGetListStrategies";
+import { useEffect } from "react";
 
 /**
  * satisfaction: "#009999",
@@ -20,12 +22,25 @@ import useDialog from "@/hooks/useDialog";
  */
 
 const TimeTracking = () => {
+  const { strategies, isLoading, fetch } = useGetListStrategies({
+    onError: (error: any) => {
+      console.log(error);
+    },
+    onSuccess: (result: any) => {
+      console.log(result);
+    },
+  });
+
   const { open, onOpen, onClose } = useDialog();
   const {
     open: openPoromodo,
     onOpen: onOpenPoromodo,
     onClose: onClosePoromodo,
   } = useDialog();
+
+  useEffect(() => {
+    fetch();
+  }, []);
 
   return (
     <>
@@ -182,11 +197,9 @@ const TimeTracking = () => {
           </div>
 
           <div className="grid grid-cols-1 gap-4 md:grid-cols-1 md:gap-6 xl:grid-cols-2 2xl:gap-7.5">
-            <StrategyCard />
-            <StrategyCard />
-            <StrategyCard />
-            <StrategyCard />
-            <StrategyCard />
+            {strategies?.map((strategy: any) => (
+              <StrategyCard key={strategy.id} strategy={strategy}/>
+            ))}
           </div>
         </div>
 
