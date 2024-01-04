@@ -16,7 +16,7 @@ interface Inputs {
   details: string;
 }
 
-const StrategyDialog = ({ open, onClose }: any) => {
+const StrategyDialog = ({ open, onClose, refetch }: any) => {
   const { isLoading, fetch: insertStrategy } = useInsertStrategy({
     onSuccess: (result: any) => {
       console.log(result);
@@ -74,6 +74,8 @@ const StrategyDialog = ({ open, onClose }: any) => {
   const onCloseAndReset = () => {
     onClose();
     reset();
+
+    refetch();
   };
 
   return (

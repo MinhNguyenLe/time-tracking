@@ -22,7 +22,7 @@ import { useEffect } from "react";
  */
 
 const TimeTracking = () => {
-  const { strategies, isLoading, fetch } = useGetListStrategies({
+  const { strategies, isLoading, fetch: fetchStrategies } = useGetListStrategies({
     onError: (error: any) => {
       console.log(error);
     },
@@ -39,12 +39,12 @@ const TimeTracking = () => {
   } = useDialog();
 
   useEffect(() => {
-    fetch();
+    fetchStrategies();
   }, []);
 
   return (
     <>
-      <StrategyDialog open={open} onClose={onClose} />
+      <StrategyDialog refetch={fetchStrategies} open={open} onClose={onClose} />
       <PoromodoDialog open={openPoromodo} onClose={onClosePoromodo} />
 
       <Breadcrumb pageName="Time Tracking" />

@@ -5,10 +5,9 @@ const useGetListStrategies = ({ onError, onSuccess }: any) => {
   const { isLoading, get: getV1 } = useLoading();
   const [strategies, setStrategies] = useState([]);
 
-  const fetch = (bodyParams?: any) => {
+  const fetch = () => {
     return getV1({
       url: "/strategy/get-list",
-      bodyParams,
       onError,
       onSuccess: (result: any) => {
         if (result?.data?.strategies) {
