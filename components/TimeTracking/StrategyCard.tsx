@@ -1,15 +1,19 @@
 import { formatDate } from "@/modules/day";
-import StrategyStatus from "./StrategyStatus";
+import {
+  StrategyStatus,
+  StrategyTitle,
+  StrategyAction,
+} from "./ComponentByStatus";
 
 const StrategyCard = ({ strategy }: any) => {
   return (
     <div className="rounded-sm border border-stroke bg-white py-6 px-7.5 shadow-default dark:border-strokedark dark:bg-boxdark divide-y divide-blue-200">
       <div className="flex items-start justify-between">
         <div className="w-full">
-          <p className="font-semibold text-primary">
+          <StrategyTitle status={strategy.Status}>
             {strategy.Name} -{" "}
             {strategy.Process.Int64 || 0 + "h/" + strategy.TimeEstimate + "h"}
-          </p>
+          </StrategyTitle>
           <p className="text-sm font-medium">
             {formatDate(strategy.StartedAt)} - {formatDate(strategy.EndedAt)}
           </p>
@@ -36,6 +40,9 @@ const StrategyCard = ({ strategy }: any) => {
           <span className={`text-sm font-medium text-[#cc0000]`}>
             {strategy.Insight}
           </span>
+        </div>
+        <div className="flex justify-end">
+          <StrategyAction status={strategy.Status} />
         </div>
       </div>
     </div>

@@ -170,7 +170,7 @@ const TimeTracking = () => {
               <div>
                 <div className="flex items-center">
                   <span
-                    className={`mr-2 block h-3 w-full max-w-3 rounded-full bg-[#d1e0e0]`}
+                    className={`mr-2 block h-3 w-full max-w-3 rounded-full bg-[#259ae6]`}
                   ></span>
                   <p className="text-sm font-medium text-black dark:text-white">
                     Not started
