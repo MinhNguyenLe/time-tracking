@@ -1,18 +1,39 @@
 import { STRATEGY_LABEL } from "@/constants";
+import useGetStrategiesByStatus from "@/hooks/useGetStrategiesByStatus";
+import useInsertPoromodo from "@/hooks/useInsertPoromodo";
 import { Transition, Dialog } from "@headlessui/react";
-import { Fragment } from "react";
+import { Fragment, useEffect } from "react";
 import { useForm, SubmitHandler } from "react-hook-form";
 
 interface Inputs {
   duration: number;
-  strategyName: string;
+  strategyId: string;
   satisfaction: number;
   productivity: number;
   interested: number;
   insight: number;
 }
 
-const PoromodoDialog = ({ open, onClose }: any) => {
+const PoromodoDialog = ({ open, onClose, refetch }: any) => {
+  const { isLoading, fetch, strategies } = useGetStrategiesByStatus({
+    onError: (error: any) => {
+      console.log(error);
+    },
+    onSuccess: (result: any) => {
+      console.log(result);
+    },
+  });
+  const { isLoading: isInserting, fetch: onInsert } = useInsertPoromodo({
+    onError: (error: any) => {
+      console.log(error);
+      onCloseAndReset();
+    },
+    onSuccess: (result: any) => {
+      console.log(result);
+      onCloseAndReset();
+    },
+  });
+
   const {
     register,
     handleSubmit,
@@ -22,7 +43,7 @@ const PoromodoDialog = ({ open, onClose }: any) => {
     formState: { errors },
   } = useForm<Inputs>({
     defaultValues: {
-      strategyName: "",
+      strategyId: "",
       duration: 0,
       satisfaction: 0,
       productivity: 0,
@@ -30,12 +51,38 @@ const PoromodoDialog = ({ open, onClose }: any) => {
       insight: 0,
     },
   });
-  const onSubmit: SubmitHandler<Inputs> = (data) => console.log(data);
+  const onSubmit: SubmitHandler<Inputs> = (data) => {
+    console.log({
+      strategyId: Number(data.strategyId),
+      duration: Number(data.duration),
+      satisfaction: Number(data.satisfaction),
+      productivity: Number(data.productivity),
+      interested: Number(data.interested),
+      insight: Number(data.insight),
+    });
+
+    onInsert({
+      strategyId: Number(data.strategyId),
+      duration: Number(data.duration),
+      satisfaction: Number(data.satisfaction),
+      productivity: Number(data.productivity),
+      interested: Number(data.interested),
+      insight: Number(data.insight),
+    })
+  };
 
   const onCloseAndReset = () => {
     onClose();
     reset();
+
+    refetch();
   };
+
+  useEffect(() => {
+    if (open) {
+      fetch();
+    }
+  }, [open]);
 
   return (
     <Transition appear show={open} as={Fragment}>
@@ -78,16 +125,22 @@ const PoromodoDialog = ({ open, onClose }: any) => {
                         <label className="mb-2.5 block text-black dark:text-white">
                           Choose strategy
                         </label>
-                        <select
-                          className="relative z-2 w-full appearance-none rounded border border-stroke bg-transparent py-3 px-5 outline-none transition focus:border-primary active:border-primary dark:border-form-strokedark dark:bg-form-input dark:focus:border-primary"
-                          {...register("strategyName", { required: true })}
-                        >
-                          {Object.values(STRATEGY_LABEL).map((label) => (
-                            <option value={label} key={label}>
-                              {label}
-                            </option>
-                          ))}
-                        </select>
+                        {isLoading ? (
+                          <>Loading ... </>
+                        ) : (
+                          <select
+                            className="relative z-2 w-full appearance-none rounded border border-stroke bg-transparent py-3 px-5 outline-none transition focus:border-primary active:border-primary dark:border-form-strokedark dark:bg-form-input dark:focus:border-primary"
+                            {...register("strategyId", { required: true })}
+                          >
+                            {strategies?.length
+                              ? strategies.map((strategy: any) => (
+                                  <option value={strategy.Id} key={strategy.Id}>
+                                    {strategy.Name}
+                                  </option>
+                                ))
+                              : null}
+                          </select>
+                        )}
                       </div>
 
                       <div className="w-full xl:w-1/2">
@@ -180,9 +233,10 @@ const PoromodoDialog = ({ open, onClose }: any) => {
 
                     <button
                       type="submit"
+                      disabled={isInserting}
                       className="w-full flex justify-center rounded bg-primary p-3 font-medium text-gray"
                     >
-                      Save
+                       {isInserting ? "Loading" : "Save"}
                     </button>
                   </div>
                 </form>

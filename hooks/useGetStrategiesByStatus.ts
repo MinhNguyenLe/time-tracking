@@ -7,7 +7,7 @@ const useGetStrategiesByStatus = ({ onError, onSuccess }: any) => {
 
   const fetch = () => {
     return getV1({
-      url: "/strategy/get-by-status",
+      url: "/strategy/get-by-status?status=IN_PROCESS",
       onError,
       onSuccess: (result: any) => {
         if (result?.data?.strategies) {

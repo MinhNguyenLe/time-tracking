@@ -8,6 +8,7 @@ import StrategyCard from "@/components/TimeTracking/StrategyCard";
 import StrategyDialog from "@/components/TimeTracking/StrategyDialog";
 import useDialog from "@/hooks/useDialog";
 import useGetListStrategies from "@/hooks/useGetListStrategies";
+import useGetPoromodos from "@/hooks/useGetPoromodos";
 import { useEffect } from "react";
 
 /**
@@ -22,7 +23,23 @@ import { useEffect } from "react";
  */
 
 const TimeTracking = () => {
-  const { strategies, isLoading, fetch: fetchStrategies } = useGetListStrategies({
+  const {
+    strategies,
+    isLoading: isGettingStrategy,
+    fetch: fetchStrategies,
+  } = useGetListStrategies({
+    onError: (error: any) => {
+      console.log(error);
+    },
+    onSuccess: (result: any) => {
+      console.log(result);
+    },
+  });
+  const {
+    isLoading: isGettingPoromodo,
+    fetch: fetchPoromodo,
+    poromodos,
+  } = useGetPoromodos({
     onError: (error: any) => {
       console.log(error);
     },
@@ -40,12 +57,13 @@ const TimeTracking = () => {
 
   useEffect(() => {
     fetchStrategies();
+    fetchPoromodo();
   }, []);
 
   return (
     <>
       <StrategyDialog refetch={fetchStrategies} open={open} onClose={onClose} />
-      <PoromodoDialog open={openPoromodo} onClose={onClosePoromodo} />
+      <PoromodoDialog refetch={fetchPoromodo} open={openPoromodo} onClose={onClosePoromodo} />
 
       <Breadcrumb pageName="Time Tracking" />
 
@@ -197,9 +215,11 @@ const TimeTracking = () => {
           </div>
 
           <div className="grid grid-cols-1 gap-4 md:grid-cols-1 md:gap-6 xl:grid-cols-2 2xl:gap-7.5">
-            {strategies?.map((strategy: any) => (
-              <StrategyCard key={strategy.id} strategy={strategy}/>
-            ))}
+            {isGettingStrategy
+              ? "Loading ..."
+              : strategies?.map((strategy: any) => (
+                  <StrategyCard refetchStrategies={fetchStrategies} key={strategy.id} strategy={strategy} />
+                ))}
           </div>
         </div>
 
@@ -228,7 +248,7 @@ const TimeTracking = () => {
               Insert poromodo
             </button>
           </div>
-          <PoromodoTable />
+          <PoromodoTable isLoading={isGettingPoromodo} poromodos={poromodos} />
         </div>
       </div>
     </>

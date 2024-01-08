@@ -3,8 +3,8 @@ import { Transition, Dialog } from "@headlessui/react";
 import { Fragment } from "react";
 import Datepicker from "react-tailwindcss-datepicker";
 import { useForm, SubmitHandler } from "react-hook-form";
-import dayjs from "dayjs";
 import useInsertStrategy from "@/hooks/useInsertStrategy";
+import dayjsWithTz from "@/modules/day";
 
 interface Inputs {
   name: string;
@@ -29,8 +29,8 @@ const StrategyDialog = ({ open, onClose, refetch }: any) => {
   });
 
   const handleValueChange = (newValue: any) => {
-    setValue("start", dayjs(newValue.startDate).toDate());
-    setValue("end", dayjs(newValue.endDate).endOf("day").toDate());
+    setValue("start", dayjsWithTz(newValue.startDate).toDate());
+    setValue("end", dayjsWithTz(newValue.endDate).endOf("day").toDate());
   };
 
   const {
@@ -54,18 +54,16 @@ const StrategyDialog = ({ open, onClose, refetch }: any) => {
   const onSubmit: SubmitHandler<Inputs> = async (data) => {
     console.log({
       ...data,
-      unitTime: "hour",
+      startedAt: dayjsWithTz(data.start).format(),
+      endedAt: dayjsWithTz(data.end).format(),
       timeEstimate: Number(data.timeEstimate),
-      createdAt: new Date(),
-      status: "NOT_STARTED",
     });
 
     await insertStrategy({
       ...data,
-      unitTime: "hour",
+      startedAt: dayjsWithTz(data.start).format(),
+      endedAt: dayjsWithTz(data.end).format(),
       timeEstimate: Number(data.timeEstimate),
-      createdAt: new Date(),
-      status: "NOT_STARTED",
     });
   };
   const watchStart = watch("start");
@@ -109,7 +107,7 @@ const StrategyDialog = ({ open, onClose, refetch }: any) => {
                   as="h3"
                   className="text-lg font-medium leading-6 text-gray-900"
                 >
-                  Strategy information {isLoading.toString()}
+                  Strategy information
                 </Dialog.Title>
 
                 <form onSubmit={handleSubmit(onSubmit)}>
@@ -233,9 +231,10 @@ const StrategyDialog = ({ open, onClose, refetch }: any) => {
 
                     <button
                       type="submit"
+                      disabled={isLoading}
                       className="w-full flex justify-center rounded bg-primary p-3 font-medium text-gray"
                     >
-                      Save
+                      {isLoading ? "Loading" : "Save"}
                     </button>
                   </div>
                 </form>

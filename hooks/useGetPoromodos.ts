@@ -3,22 +3,22 @@ import useLoading from "./useLoading";
 
 const useGetPoromodos = ({ onError, onSuccess }: any) => {
   const { isLoading, get: getV1 } = useLoading();
-  const [strategies, setStrategies] = useState([]);
+  const [poromodos, setPoromodos] = useState([]);
 
   const fetch = () => {
     return getV1({
       url: "/poromodo/get-list",
       onError,
       onSuccess: (result: any) => {
-        if (result?.data?.strategies) {
-          setStrategies(result?.data?.strategies);
-          onSuccess?.(result?.data?.strategies);
+        if (result?.data?.poromodos) {
+          setPoromodos(result?.data?.poromodos);
+          onSuccess?.(result?.data?.poromodos);
         }
       },
     });
   };
 
-  return { isLoading, fetch, strategies };
+  return { isLoading, fetch, poromodos };
 };
 
 export default useGetPoromodos;

@@ -5,7 +5,7 @@ import {
   StrategyAction,
 } from "./ComponentByStatus";
 
-const StrategyCard = ({ strategy }: any) => {
+const StrategyCard = ({ strategy,refetchStrategies }: any) => {
   return (
     <div className="rounded-sm border border-stroke bg-white py-6 px-7.5 shadow-default dark:border-strokedark dark:bg-boxdark divide-y divide-blue-200">
       <div className="flex items-start justify-between">
@@ -42,7 +42,7 @@ const StrategyCard = ({ strategy }: any) => {
           </span>
         </div>
         <div className="flex justify-end">
-          <StrategyAction status={strategy.Status} />
+          <StrategyAction refetchStrategies={refetchStrategies} id={strategy.Id} status={strategy.Status} />
         </div>
       </div>
     </div>

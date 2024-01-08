@@ -1,4 +1,5 @@
 import { STRATEGY_STATUS } from "@/constants";
+import useStartStrategy from "@/hooks/useStartStrategy";
 import { PropsWithChildren } from "react";
 
 export const StrategyStatus = ({ status }: { status: string }) => {
@@ -47,18 +48,35 @@ export const StrategyTitle = ({ status, children }: any) => {
 
 export const StrategyAction = ({
   status,
-  loading,
-  onClick,
-}: PropsWithChildren<
-  Pick<
-    React.DetailedHTMLProps<
-      React.ButtonHTMLAttributes<HTMLButtonElement>,
-      HTMLButtonElement
-    >,
-    "onClick"
-  > & { status: keyof typeof STRATEGY_STATUS; loading?: boolean }
->) => {
-  const ButtonContainer = ({ children }: PropsWithChildren) => (
+  id,
+  refetchStrategies,
+}: {
+  id: string;
+  status: keyof typeof STRATEGY_STATUS;
+  refetchStrategies: any;
+}) => {
+  const { isLoading, fetch } = useStartStrategy({
+    onError: (error: any) => {
+      console.log(error);
+    },
+    onSuccess: (result: any) => {
+      console.log(result);
+    },
+    refetch: refetchStrategies,
+  });
+
+  const ButtonContainer = ({
+    children,
+    onClick,
+  }: PropsWithChildren<
+    Pick<
+      React.DetailedHTMLProps<
+        React.ButtonHTMLAttributes<HTMLButtonElement>,
+        HTMLButtonElement
+      >,
+      "onClick"
+    >
+  >) => (
     <button
       onClick={onClick}
       type="button"
@@ -68,7 +86,7 @@ export const StrategyAction = ({
     </button>
   );
 
-  if (loading) {
+  if (isLoading) {
     return (
       <ButtonContainer>
         <svg
@@ -125,9 +143,16 @@ export const StrategyAction = ({
     );
   }
 
-  if (status === STRATEGY_STATUS.NOT_STARTED || status === STRATEGY_STATUS.DELAY) {
+  if (
+    status === STRATEGY_STATUS.NOT_STARTED ||
+    status === STRATEGY_STATUS.DELAY
+  ) {
     return (
-      <ButtonContainer>
+      <ButtonContainer
+        onClick={async () => {
+          fetch({ id });
+        }}
+      >
         <svg
           width="20px"
           height="20px"
@@ -189,10 +214,6 @@ export const StrategyAction = ({
         </ButtonContainer>
       </>
     );
-  }
-
-  if (status === STRATEGY_STATUS.COMPLETED) {
-    return <></>;
   }
 
   return <></>;
