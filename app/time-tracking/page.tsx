@@ -1,7 +1,7 @@
 "use client";
 
 import Breadcrumb from "@/components/Breadcrumbs/Breadcrumb";
-import CardDataStats from "@/components/CardDataStats";
+import DetailsChangedStrategy from "@/components/TimeTracking/DetailsChangedStrategy";
 import PoromodoDialog from "@/components/TimeTracking/PoromodoDialog";
 import PoromodoTable from "@/components/TimeTracking/PoromodoTable";
 import StrategyCard from "@/components/TimeTracking/StrategyCard";
@@ -9,7 +9,7 @@ import StrategyDialog from "@/components/TimeTracking/StrategyDialog";
 import useDialog from "@/hooks/useDialog";
 import useGetListStrategies from "@/hooks/useGetListStrategies";
 import useGetPoromodos from "@/hooks/useGetPoromodos";
-import { useEffect } from "react";
+import { useState, useEffect } from "react";
 
 /**
  * satisfaction: "#009999",
@@ -54,16 +54,35 @@ const TimeTracking = () => {
     onOpen: onOpenPoromodo,
     onClose: onClosePoromodo,
   } = useDialog();
+  const {
+    open: openDetailsChanged,
+    onOpen: onOpenDetailsChanged,
+    onClose: onCloseDetailChaned,
+  } = useDialog();
 
   useEffect(() => {
     fetchStrategies();
     fetchPoromodo();
   }, []);
 
+  const [strategyTarget, setStrategyTarget] = useState<string>("");
+
   return (
     <>
       <StrategyDialog refetch={fetchStrategies} open={open} onClose={onClose} />
-      <PoromodoDialog refetch={fetchPoromodo} open={openPoromodo} onClose={onClosePoromodo} />
+      <PoromodoDialog
+        refetch={() => {
+          fetchPoromodo();
+          fetchStrategies();
+        }}
+        open={openPoromodo}
+        onClose={onClosePoromodo}
+      />
+      <DetailsChangedStrategy
+        id={strategyTarget}
+        open={openDetailsChanged}
+        onClose={onCloseDetailChaned}
+      />
 
       <Breadcrumb pageName="Time Tracking" />
 
@@ -94,7 +113,7 @@ const TimeTracking = () => {
             </button>
           </div>
 
-          <div className="mb-8 grid grid-cols-1 gap-4 md:grid-cols-2 md:gap-6 xl:grid-cols-2 2xl:gap-7.5">
+          {/* <div className="mb-8 grid grid-cols-1 gap-4 md:grid-cols-2 md:gap-6 xl:grid-cols-2 2xl:gap-7.5">
             <CardDataStats
               title="Total views"
               total="$3.456K"
@@ -147,7 +166,7 @@ const TimeTracking = () => {
                 />
               </svg>
             </CardDataStats>
-          </div>
+          </div> */}
 
           <div className="mb-8">
             <div className="grid grid-cols-1 gap-4 md:grid-cols-2 md:gap-6 xl:grid-cols-4 2xl:gap-7.5">
@@ -218,7 +237,15 @@ const TimeTracking = () => {
             {isGettingStrategy
               ? "Loading ..."
               : strategies?.map((strategy: any) => (
-                  <StrategyCard refetchStrategies={fetchStrategies} key={strategy.id} strategy={strategy} />
+                  <StrategyCard
+                    onClick={() => {
+                      setStrategyTarget(()=> strategy.Id);
+                      onOpenDetailsChanged();
+                    }}
+                    refetchStrategies={fetchStrategies}
+                    key={strategy.Id}
+                    strategy={strategy}
+                  />
                 ))}
           </div>
         </div>

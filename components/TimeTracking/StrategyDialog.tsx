@@ -21,10 +21,14 @@ const StrategyDialog = ({ open, onClose, refetch }: any) => {
     onSuccess: (result: any) => {
       console.log(result);
       onCloseAndReset();
+
+      refetch();
     },
     onError: (error: any) => {
       console.log(error);
       onCloseAndReset();
+
+      refetch();
     },
   });
 
@@ -72,8 +76,6 @@ const StrategyDialog = ({ open, onClose, refetch }: any) => {
   const onCloseAndReset = () => {
     onClose();
     reset();
-
-    refetch();
   };
 
   return (

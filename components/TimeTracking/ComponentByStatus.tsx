@@ -1,5 +1,6 @@
 import { STRATEGY_STATUS } from "@/constants";
-import useStartStrategy from "@/hooks/useStartStrategy";
+import useCompleteStrategy from "@/hooks/useCompleteStrategy";
+import useStartStrategy, { useDelaysStrategy } from "@/hooks/useStartStrategy";
 import { PropsWithChildren } from "react";
 
 export const StrategyStatus = ({ status }: { status: string }) => {
@@ -65,6 +66,16 @@ export const StrategyAction = ({
     refetch: refetchStrategies,
   });
 
+  const { isLoading:isCompleting, fetch:onComplete } = useCompleteStrategy({
+    onError: (error: any) => {
+      console.log(error);
+    },
+    onSuccess: (result: any) => {
+      console.log(result);
+    },
+    refetch: refetchStrategies,
+  });
+
   const ButtonContainer = ({
     children,
     onClick,
@@ -86,7 +97,7 @@ export const StrategyAction = ({
     </button>
   );
 
-  if (isLoading) {
+  if (isLoading || isCompleting) {
     return (
       <ButtonContainer>
         <svg
@@ -174,7 +185,7 @@ export const StrategyAction = ({
   if (status === STRATEGY_STATUS.IN_PROCESS) {
     return (
       <>
-        <ButtonContainer>
+        {/* <ButtonContainer>
           <svg
             width="20x"
             height="20px"
@@ -193,8 +204,8 @@ export const StrategyAction = ({
               fill="blue"
             />
           </svg>
-        </ButtonContainer>
-        <ButtonContainer>
+        </ButtonContainer> */}
+        <ButtonContainer onClick={()=>{onComplete({id})}}>
           <svg
             width="20px"
             height="20px"

@@ -12,6 +12,7 @@ interface Inputs {
   productivity: number;
   interested: number;
   insight: number;
+  goal: string;
 }
 
 const PoromodoDialog = ({ open, onClose, refetch }: any) => {
@@ -27,10 +28,14 @@ const PoromodoDialog = ({ open, onClose, refetch }: any) => {
     onError: (error: any) => {
       console.log(error);
       onCloseAndReset();
+
+      refetch();
     },
     onSuccess: (result: any) => {
       console.log(result);
       onCloseAndReset();
+
+      refetch();
     },
   });
 
@@ -44,15 +49,17 @@ const PoromodoDialog = ({ open, onClose, refetch }: any) => {
   } = useForm<Inputs>({
     defaultValues: {
       strategyId: "",
-      duration: 0,
-      satisfaction: 0,
-      productivity: 0,
-      interested: 0,
-      insight: 0,
+      duration: 55,
+      satisfaction: 3,
+      productivity: 3,
+      interested: 3,
+      insight: 3,
+      goal: "",
     },
   });
   const onSubmit: SubmitHandler<Inputs> = (data) => {
     console.log({
+      ...data,
       strategyId: Number(data.strategyId),
       duration: Number(data.duration),
       satisfaction: Number(data.satisfaction),
@@ -62,20 +69,19 @@ const PoromodoDialog = ({ open, onClose, refetch }: any) => {
     });
 
     onInsert({
+      ...data,
       strategyId: Number(data.strategyId),
       duration: Number(data.duration),
       satisfaction: Number(data.satisfaction),
       productivity: Number(data.productivity),
       interested: Number(data.interested),
       insight: Number(data.insight),
-    })
+    });
   };
 
   const onCloseAndReset = () => {
     onClose();
     reset();
-
-    refetch();
   };
 
   useEffect(() => {
@@ -121,7 +127,7 @@ const PoromodoDialog = ({ open, onClose, refetch }: any) => {
                 <form onSubmit={handleSubmit(onSubmit)}>
                   <div className="p-6.5">
                     <div className="mb-4.5 flex flex-col gap-6 xl:flex-row">
-                      <div className="w-full xl:w-1/2">
+                      <div className="w-full">
                         <label className="mb-2.5 block text-black dark:text-white">
                           Choose strategy
                         </label>
@@ -142,6 +148,23 @@ const PoromodoDialog = ({ open, onClose, refetch }: any) => {
                           </select>
                         )}
                       </div>
+                    </div>
+                    <div className="mb-4.5 flex flex-col gap-6 xl:flex-row">
+                      <div className="w-full xl:w-1/2">
+                        <label className="mb-2.5 block text-black dark:text-white">
+                          Goal
+                        </label>
+                        <input
+                          placeholder="Enter your goal"
+                          className="w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 font-medium outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-input dark:focus:border-primary"
+                          {...register("goal", { required: true })}
+                        />
+                        {errors.goal && (
+                          <span className="text-sm text-[#cc0000]">
+                            This field is required
+                          </span>
+                        )}
+                      </div>
 
                       <div className="w-full xl:w-1/2">
                         <label className="mb-2.5 block text-black dark:text-white">
@@ -149,7 +172,7 @@ const PoromodoDialog = ({ open, onClose, refetch }: any) => {
                         </label>
                         <input
                           type="number"
-                          placeholder="Enter your time, by hours"
+                          placeholder="Enter your time learning"
                           className="w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 font-medium outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-input dark:focus:border-primary"
                           {...register("duration", { required: true })}
                         />
@@ -236,7 +259,7 @@ const PoromodoDialog = ({ open, onClose, refetch }: any) => {
                       disabled={isInserting}
                       className="w-full flex justify-center rounded bg-primary p-3 font-medium text-gray"
                     >
-                       {isInserting ? "Loading" : "Save"}
+                      {isInserting ? "Loading" : "Save"}
                     </button>
                   </div>
                 </form>

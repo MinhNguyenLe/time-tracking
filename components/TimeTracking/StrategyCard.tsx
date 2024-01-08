@@ -4,15 +4,20 @@ import {
   StrategyTitle,
   StrategyAction,
 } from "./ComponentByStatus";
+import { formatHourMinute } from "@/utils/utils";
 
-const StrategyCard = ({ strategy,refetchStrategies }: any) => {
+const StrategyCard = ({ onClick, strategy, refetchStrategies }: any) => {
   return (
-    <div className="rounded-sm border border-stroke bg-white py-6 px-7.5 shadow-default dark:border-strokedark dark:bg-boxdark divide-y divide-blue-200">
+    <div
+      onClick={onClick}
+      className="cursor-pointer rounded-sm border border-stroke bg-white py-6 px-7.5 shadow-default dark:border-strokedark dark:bg-boxdark divide-y divide-blue-200"
+    >
       <div className="flex items-start justify-between">
         <div className="w-full">
           <StrategyTitle status={strategy.Status}>
-            {strategy.Name} -{" "}
-            {strategy.Process.Int64 || 0 + "h/" + strategy.TimeEstimate + "h"}
+            {strategy.Name} - {formatHourMinute(strategy.Process)}
+            {"/"}
+            {formatHourMinute(strategy.TimeEstimate)}
           </StrategyTitle>
           <p className="text-sm font-medium">
             {formatDate(strategy.StartedAt)} - {formatDate(strategy.EndedAt)}
@@ -42,7 +47,11 @@ const StrategyCard = ({ strategy,refetchStrategies }: any) => {
           </span>
         </div>
         <div className="flex justify-end">
-          <StrategyAction refetchStrategies={refetchStrategies} id={strategy.Id} status={strategy.Status} />
+          <StrategyAction
+            refetchStrategies={refetchStrategies}
+            id={strategy.Id}
+            status={strategy.Status}
+          />
         </div>
       </div>
     </div>
